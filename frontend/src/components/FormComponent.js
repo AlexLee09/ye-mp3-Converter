@@ -14,13 +14,18 @@ function FormComponent () {
         }
 
         const response = await fetch("/song/convert",
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataToSend)
-            })
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dataToSend)
+        })
 
         const data = await response.json();
+
+        if (data.status === "ERROR")
+        {
+            alert (data.message); 
+        }
 
     }
 
