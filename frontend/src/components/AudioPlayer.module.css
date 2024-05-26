@@ -1,0 +1,18 @@
+img {
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    width: 350px;
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: center;
+}
+
+.timeDisplay {
+    font-size: 0.8rem;
+    color: #ffffff;
+    text-align: center;
+    width: 60%;
+    margin-bottom: 1rem;
+  }

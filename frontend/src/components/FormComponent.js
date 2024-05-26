@@ -28,6 +28,10 @@ function FormComponent () {
             alert (data.message); 
         }
 
+        setTimeout(() => {
+            window.location.reload();
+        }, 5000);
+
     }
 
     return(

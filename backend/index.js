@@ -21,10 +21,17 @@ app.post('/song/convert', async (req, res) => {
         const fs = require('fs');
         const ytdl = require('ytdl-core');
         const ffmpeg = require('fluent-ffmpeg');
+        const https = require('https');
         // console.log(ytdl.validateURL(url))
+
+       
+          
+          // Replace 'YOUR_VIDEO_URL' with your YouTube video URL
+          
+
         if (ytdl.validateURL(url) === true){
             const output = 'audio.mp3';
-        
+            downloadThumbnail(url);
 
             ffmpeg(ytdl(url, { quality: 'highestaudio', filter: 'audioonly' }))
                 .audioCodec('libmp3lame') // Set MP3 codec
@@ -38,6 +45,28 @@ app.post('/song/convert', async (req, res) => {
                 })
                 .saveToFile(output);
             res.status(200).json({ status: "SUCCESS", message: "Working" });
+
+            function downloadThumbnail(videoUrl) {
+  ytdl.getInfo(videoUrl).then(info => {
+    const thumbnailUrl = info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url; // Get the highest quality thumbnail
+    const file = fs.createWriteStream("thumbnail.jpg"); // Adjust the file type based on the URL if needed
+
+    https.get(thumbnailUrl, function(response) {
+      response.pipe(file);
+
+      file.on('finish', () => {
+        file.close();
+        console.log('Downloaded thumbnail successfully!');
+      });
+    }).on('error', (err) => {
+      fs.unlink('thumbnail.jpg'); // Delete the file async on error
+      console.error('Error downloading thumbnail:', err.message);
+    });
+  });
+}
+
+// Replace 'YOUR_VIDEO_URL' with your YouTube video URL
+
         }
         else {
             // alert("Error")
@@ -54,7 +83,10 @@ app.get('/stream', (req, res) => {
     res.sendFile(filePath);
 });
 
-
+app.get('/thumbnail', (req, res) => {
+    const filePath = path.join(__dirname, 'thumbnail.jpg');
+    res.sendFile(filePath)
+})
 
 
 app.listen(PORT, () => // fire up express server
